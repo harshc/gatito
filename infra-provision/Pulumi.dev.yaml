@@ -1,0 +1,5 @@
+config:
+  gcp:project: modular-source-407814
+  gcp:region: us-central1
+  infra-provision:nodesPerZone: "1"
+  infra-provision:machineType: n1-standard-1
