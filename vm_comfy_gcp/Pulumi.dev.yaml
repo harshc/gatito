@@ -1,0 +1,8 @@
+config:
+  gcp:project: modular-source-407814
+  gcp:region: us-central1
+  gcp:zone: us-central1-a
+  vm_comfy_gcp:instanceTag: webserver
+  vm_comfy_gcp:machineType: n1-standard-8
+  vm_comfy_gcp:osImage: projects/ml-images/global/images/c0-deeplearning-common-cpu-v20230925-debian-10-py37
+  vm_comfy_gcp:servicePort: "8188"
