@@ -3,10 +3,18 @@ import * as gcp from "@pulumi/gcp";
 
 // Import the program's configuration settings.
 const config = new pulumi.Config();
+const gcpConfig = new pulumi.Config("gcp");
+const region = gcpConfig.get("region") || "us-central1";
+const zone = gcpConfig.get("zone") || "us-central1-a";
+
 const machineType = config.get("machineType") || "f1-micro";
 const osImage = config.get("osImage") || "debian-11";
 const instanceTag = config.get("instanceTag") || "webserver";
 const servicePort = config.get("servicePort") || "80";
+const gpuType = config.get("gpuAcceleratorType") || "nvidia-tesla-t4";
+const gpuCount = config.getNumber("gpuPerInstance") || 1;
+const diskSize = config.getNumber("diskSize") || 50;
+const sshKey = config.get("sshKey") || "harsh_chiplonkar";
 
 // Create a new network for the virtual machine.
 const network = new gcp.compute.Network("network", {
@@ -57,10 +65,12 @@ const metadataStartupScript = `#!/bin/bash
 
 // Create the virtual machine.
 const instance = new gcp.compute.Instance("instance", {
-    machineType,
+    machineType: machineType,
+    zone: zone,
     bootDisk: {
         initializeParams: {
             image: osImage,
+            size: diskSize,
         },
     },
     networkInterfaces: [
@@ -72,13 +82,27 @@ const instance = new gcp.compute.Instance("instance", {
             ],
         },
     ],
+    guestAccelerators: [{
+        type: gpuType,
+        count: gpuCount,
+
+    }],
     serviceAccount: {
         scopes: [
             "https://www.googleapis.com/auth/cloud-platform",
         ],
     },
+    scheduling: {
+        onHostMaintenance: "TERMINATE",
+        automaticRestart: false,
+        // additional setting to ensure the instance can use the attached GPU
+        preemptible: true,
+    },
     allowStoppingForUpdate: true,
     metadataStartupScript,
+    metadata: {
+        "ssh-keys": sshKey,
+    },
     tags: [
         instanceTag,
     ],

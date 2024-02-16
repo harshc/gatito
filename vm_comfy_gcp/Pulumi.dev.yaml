@@ -5,4 +5,8 @@ config:
   vm_comfy_gcp:instanceTag: webserver
   vm_comfy_gcp:machineType: n1-standard-8
   vm_comfy_gcp:osImage: projects/ml-images/global/images/c0-deeplearning-common-cpu-v20230925-debian-10-py37
+  vm_comfy_gcp:diskSize: 100
   vm_comfy_gcp:servicePort: "8188"
+  vm_comfy_gcp:gpuPerInstance: "1"
+  vm_comfy_gcp:gpuAcceleratorType: "nvidia-tesla-t4-vws"
+  vm_comfy_gcp:sshKey: "harsh_chiplonkar"
